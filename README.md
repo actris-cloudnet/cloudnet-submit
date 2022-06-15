@@ -9,12 +9,12 @@ pip install cloudnet-submit
 
 ## Getting started
 
-Generate a `config.toml` file
+Generate a `cloudnet-config.toml` file
 ```sh
-cloudnet-submit generate-config
+cloudnet-submit-generate-config
 ```
 
-Update your credentials and data configuration in the `config.toml` file:
+Update your credentials and data configuration in the `cloudnet-config.toml` file:
 
 ```toml
 [user_account]
@@ -22,12 +22,12 @@ username = "alice"
 password = "alisSecretPassword"
 
 [[instrument]]
-site_id = "mace-head"
-instrument="chm15k"
-path_fmt = "/data/chm15k/%Y/data-%Y%m%d-*.{nc,NC}"
+site       = "mace-head"
+instrument = "chm15k"
+path_fmt   = "/data/mace-head/chm15k/%Y/data%Y%m%d*.nc"
 ```
 
 Submit today's data:
 ```sh
-cloudnet-submit upload
+cloudnet-submit
 ```
