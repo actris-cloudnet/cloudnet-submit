@@ -10,18 +10,9 @@ from typing import Union
 
 import requests
 
+from .clu_cfg import Clu
 from .configuration import Config
 from .utils import compute_checksum
-
-
-@dataclass
-class Clu:
-    metadata_url: str = "https://cloudnet.fmi.fi/upload/metadata/"
-    data_url_base: str = "https://cloudnet.fmi.fi/upload/data/"
-
-    def data_url(self, checksum: str) -> str:
-        return f"{self.data_url_base}{checksum}"
-
 
 CLU = Clu()
 
@@ -37,6 +28,7 @@ class Metadata:
 @dataclass
 class InstrumentMetadata(Metadata):
     instrument: str
+    instrument_pid: Union[str, None]
 
 
 @dataclass
@@ -46,10 +38,10 @@ class ModelMetadata(Metadata):
 
 @dataclass
 class Status:
-    metadata_uploaded: bool = False
-    metadata_submission_status: Union[int, None] = None
-    data_uploaded: bool = False
-    data_submission_status: Union[int, None] = None
+    metadata_ok: bool = False
+    data_ok: bool = False
+    metadata: Union[int, None] = None
+    data: Union[int, None] = None
 
 
 class Submission:
@@ -71,22 +63,26 @@ class Submission:
         )
 
     def __str__(self):
-        if isinstance(self.metadata, InstrumentMetadata):
-            model_or_instrument = self.metadata.instrument
-        else:
-            model_or_instrument = self.metadata.model
+        model_or_instrument = self.get_model_or_instrument()
         site = self.metadata.site
         date = str(self.metadata.measurement_date)
         fname = self.metadata.filename
-        checksum_str = (
-            self.metadata.checksum
-            if self.metadata.checksum
-            else "checksum-not-computed"
-        )
         return (
-            f"{site:<10} {model_or_instrument:<10} "
-            + f"{date: <15} {fname:<30} {checksum_str}"
+            f"{site:<10} {model_or_instrument:<15} "
+            + f"{date:<15} {fname:<30}"
         )
+
+    def __str_dry__(self):
+        model_or_instrument = self.get_model_or_instrument()
+        site = self.metadata.site
+        date = str(self.metadata.measurement_date)
+        return f"{site:<10} {model_or_instrument:<15} {date:<15} {self.path}"
+
+    def get_model_or_instrument(self) -> str:
+        if isinstance(self.metadata, InstrumentMetadata):
+            return self.metadata.instrument
+        else:
+            return self.metadata.model
 
     def compute_checksum(self):
         if self.metadata.checksum is None:
@@ -95,6 +91,9 @@ class Submission:
             raise ValueError(f"Checksum for {self.path} is None")
 
     def submit_metadata(self):
+        import time
+
+        time.sleep(0.5)
         self.compute_checksum()
         body = {
             "site": self.metadata.site,
@@ -104,38 +103,61 @@ class Submission:
         }
         if isinstance(self.metadata, InstrumentMetadata):
             body["instrument"] = self.metadata.instrument
+            if isinstance(self.metadata.instrument_pid, str):
+                body["instrument_pid"] = self.metadata.instrument_pid
+            url = CLU.instrument.metadata_url
         else:
             body["model"] = self.metadata.model
+            url = CLU.model.metadata_url
 
-        res = requests.post(CLU.metadata_url, json=body, auth=self.auth)
-        self.status.metadata_submission_status = res.status_code
+        res = requests.post(
+            url, json=body, auth=self.auth, headers=CLU.headers
+        )
+        self.status.metadata = res.status_code
         if res.ok:
-            self.status.metadata_uploaded = True
+            self.status.metadata_ok = True
 
     def submit_data(self):
-        with self.path.open("rb") as data:
-            if isinstance(self.metadata.checksum, str):
-                url = CLU.data_url(self.metadata.checksum)
-                res = requests.put(f"{url}", data=data, auth=self.auth)
-            else:
-                raise ValueError(f"{self}, missing checksum")
-        self.status.data_submission_status = res.status_code
-        if res.ok:
-            self.status.data_uploaded = True
-
-    def submit(self):
         import time
 
-        stdout.write(f"Submitting metadata: {self}\r")
-        time.sleep(1)
+        time.sleep(1.5)
+        with self.path.open("rb") as data:
+            if isinstance(self.metadata.checksum, str):
+                checksum = self.metadata.checksum
+                url = (
+                    CLU.instrument.data_url(checksum)
+                    if isinstance(self.metadata, InstrumentMetadata)
+                    else CLU.model.data_url(checksum)
+                )
+                res = requests.put(
+                    url, data=data, auth=self.auth, headers=CLU.headers
+                )
+            else:
+                raise ValueError(f"{self}, missing checksum")
+        self.status.data = res.status_code
+        if res.ok:
+            self.status.data_ok = True
+
+    def print_status(self, ret):
+        meta = (
+            str(self.status.metadata)
+            if self.status.metadata is not None
+            else "-"
+        )
+        data = str(self.status.data) if self.status.data is not None else "-"
+        stdout.write(f"[metadata: {meta:<3} data: {data:<3}] {self}{ret}")
+
+    def submit(self):
+        self.print_status("\r")
         self.submit_metadata()
-        if self.status.metadata_uploaded:
+        self.print_status("\r")
+        if self.status.metadata_ok:
             self.submit_data()
-        else:
-            stdout.write(f"Failed to submit metadata: {self}\n")
+        self.print_status("\n")
 
     def dry_run(self):
-        stdout.write(f"DRY-RUN: {self}\n")
+        info_str = self.__str_dry__()
+        stdout.write(f"{info_str}\n")
 
 
 def get_submissions(config: Config) -> list[Submission]:
@@ -149,6 +171,7 @@ def get_submissions(config: Config) -> list[Submission]:
                 filename=f.name,
                 checksum=None,
                 instrument=iconf.instrument,
+                instrument_pid=iconf.instrument_pid,
             )
             submissions.append(
                 Submission(path=f, metadata=metadata_instrument, auth=auth)

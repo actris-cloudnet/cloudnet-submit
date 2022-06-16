@@ -5,9 +5,11 @@ import datetime
 from dataclasses import dataclass
 from pathlib import Path
 from sys import stderr
+from typing import Union
 
 import toml
 
+from . import __version__
 from .utils import date_parser
 
 
@@ -21,6 +23,7 @@ class UserAccountConfig:
 class InstrumentConfig:
     site: str
     instrument: str
+    instrument_pid: Union[str, None]
     path_fmt: str
 
 
@@ -42,6 +45,9 @@ class Config:
 
 def get_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--version", action="version", version=f"%(prog)s {__version__}"
+    )
     parser.add_argument(
         "-c", "--config", type=str, default="cloudnet-config.toml"
     )
@@ -97,6 +103,9 @@ def get_instrument_config(config) -> list[InstrumentConfig]:
             InstrumentConfig(
                 site=iconf["site"],
                 instrument=iconf["instrument"],
+                instrument_pid=iconf["instrument_pid"]
+                if "instrument_pid" in iconf
+                else None,
                 path_fmt=iconf["path_fmt"],
             )
         )
@@ -118,13 +127,15 @@ def get_model_config(config) -> list[ModelConfig]:
 
 def get_dates(args) -> list[datetime.date]:
     today = datetime.date.today()
+    one_day = datetime.timedelta(days=1)
     if all(
         [
             a is None
             for a in [args.date, args.from_date, args.to_date, args.last_ndays]
         ]
     ):
-        return [today]
+        last_three_days = [today - i * one_day for i in range(3)]
+        return last_three_days
     dates = set()
     # Dates from --date argument
     for date in args.date if args.date else []:
@@ -132,7 +143,6 @@ def get_dates(args) -> list[datetime.date]:
     # Date range from --from-date --to-date arguments
     to_date = args.to_date if args.to_date else today
     from_date = args.from_date if args.from_date else min(to_date, today)
-    one_day = datetime.timedelta(days=1)
     idate = from_date
     while idate <= to_date:
         dates.add(idate)
