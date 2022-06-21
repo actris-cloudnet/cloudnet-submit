@@ -4,13 +4,43 @@ import argparse
 import datetime
 from dataclasses import dataclass
 from pathlib import Path
+from platform import platform
 from sys import stderr
-from typing import Union
+from typing import Dict, Union
 
 import toml
 
 from . import __version__
-from .utils import date_parser
+from .dateutils import date_parser
+
+example_config_fname = "cloudnet-config-example.toml"
+default_config_fname = "cloudnet-config.toml"
+
+
+class Dataportal:
+    def __init__(self, base_url: str = "https://cloudnet.fmi.fi"):
+        self.base_url: str = base_url
+        self.instrument = self.Instrument(self.base_url)
+        self.model = self.Model(self.base_url)
+        self.headers: Dict[str, str] = {
+            "User-Agent": f"cloudnet-submit/{__version__} ({platform()})"
+        }
+
+    class Instrument:
+        def __init__(self, base_url: str):
+            self.base_url: str = base_url
+            self.metadata_url: str = f"{self.base_url}/upload/metadata"
+
+        def data_url(self, checksum: str) -> str:
+            return f"{self.base_url}/upload/data/{checksum}"
+
+    class Model:
+        def __init__(self, base_url: str):
+            self.base_url: str = base_url
+            self.metadata_url: str = f"{self.base_url}/model-upload/metadata"
+
+        def data_url(self, checksum: str) -> str:
+            return f"{self.base_url}/model-upload/data/{checksum}"
 
 
 @dataclass
@@ -49,7 +79,7 @@ def get_args():
         "--version", action="version", version=f"%(prog)s {__version__}"
     )
     parser.add_argument(
-        "-c", "--config", type=str, default="cloudnet-config.toml"
+        "-c", "--config", type=str, default=default_config_fname
     )
     parser.add_argument("-n", "--dry-run", action="store_true")
     parser.add_argument("-d", "--date", type=date_parser, nargs="*")

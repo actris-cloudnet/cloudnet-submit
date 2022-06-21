@@ -1,9 +1,27 @@
+from unittest.mock import patch
+
 import pytest
 
-from cloudnet_submit.main import main
+from cloudnet_submit.cfg import get_config
+from cloudnet_submit.generate_config import generate_config
+from cloudnet_submit.utils import get_submissions
+
+from .cfg import test_config_fname
 
 
-@pytest.mark.xfail
-def test_test():
-    main()
-    assert True is True
+def test_generate_config(make_test_dir):
+    with patch("sys.argv", ["prog", "-o", "-"]):
+        generate_config()
+    generate_config()
+    with pytest.raises(FileExistsError):
+        generate_config()
+
+
+def test_get_subs(make_data):
+    with patch("sys.argv", ["prog", "-n", "--config", test_config_fname]):
+        config = get_config()
+        submissions = get_submissions(config)
+    generated_files = set([p.resolve() for p in make_data])
+    files_to_submit = set([sub.path.resolve() for sub in submissions])
+    assert len(generated_files) > 0
+    assert generated_files == files_to_submit

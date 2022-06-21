@@ -1,5 +1,5 @@
-from .configuration import get_config
-from .Submission import get_submissions
+from .cfg import get_config
+from .utils import get_submissions
 
 
 def main() -> None:

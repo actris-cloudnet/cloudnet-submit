@@ -1,35 +1,29 @@
 import argparse
+import pkgutil
 from pathlib import Path
-from sys import stderr, stdout
+from sys import stdout
 
-default_config = """\
-[user_account]
-username = "alice"
-password = "alicesSecretPassword"
-
-[[instrument]]
-site       =  "mace-head"
-instrument =  "chm15k"
-path_fmt   =  "/data/hyytiala/chm15k/%Y/%m/hyytiala-chm15k-%Y-%m-%d*.nc"
-"""
+from .cfg import default_config_fname, example_config_fname
 
 
 def generate_config() -> None:
+    example_config = pkgutil.get_data("cloudnet_submit", example_config_fname)
+    if not isinstance(example_config, bytes):
+        raise ValueError(f'Cannot read "{example_config_fname}" properly')
     args = get_args()
-    print(type(args))
     path = Path(args.output)
     if path.exists():
-        stderr.write(
-            f'Cannot generate a configuration file, "{path}" already exists.\n'
+        raise FileExistsError(
+            f'Cannot generate a configuration file, "{path}" already exists.'
         )
     elif args.output == "-":
-        stdout.write(default_config)
+        stdout.buffer.write(example_config)
     else:
-        with path.open("w") as f:
-            f.write(default_config)
+        with path.open("wb") as f:
+            f.write(example_config)
 
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--output", default="cloudnet-config.toml")
+    parser.add_argument("-o", "--output", default=default_config_fname)
     return parser.parse_args()

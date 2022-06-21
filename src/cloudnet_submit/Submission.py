@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import datetime
-import glob
-import itertools
+import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 from sys import stdout
@@ -10,11 +9,9 @@ from typing import Union
 
 import requests
 
-from .clu_cfg import Clu
-from .configuration import Config
-from .utils import compute_checksum
+from .cfg import Dataportal as DataportalConfig
 
-CLU = Clu()
+DATAPORTAL = DataportalConfig()
 
 
 @dataclass
@@ -91,9 +88,6 @@ class Submission:
             raise ValueError(f"Checksum for {self.path} is None")
 
     def submit_metadata(self):
-        import time
-
-        time.sleep(0.5)
         self.compute_checksum()
         body = {
             "site": self.metadata.site,
@@ -105,32 +99,29 @@ class Submission:
             body["instrument"] = self.metadata.instrument
             if isinstance(self.metadata.instrument_pid, str):
                 body["instrument_pid"] = self.metadata.instrument_pid
-            url = CLU.instrument.metadata_url
+            url = DATAPORTAL.instrument.metadata_url
         else:
             body["model"] = self.metadata.model
-            url = CLU.model.metadata_url
+            url = DATAPORTAL.model.metadata_url
 
         res = requests.post(
-            url, json=body, auth=self.auth, headers=CLU.headers
+            url, json=body, auth=self.auth, headers=DATAPORTAL.headers
         )
         self.status.metadata = res.status_code
         if res.ok:
             self.status.metadata_ok = True
 
     def submit_data(self):
-        import time
-
-        time.sleep(1.5)
         with self.path.open("rb") as data:
             if isinstance(self.metadata.checksum, str):
                 checksum = self.metadata.checksum
                 url = (
-                    CLU.instrument.data_url(checksum)
+                    DATAPORTAL.instrument.data_url(checksum)
                     if isinstance(self.metadata, InstrumentMetadata)
-                    else CLU.model.data_url(checksum)
+                    else DATAPORTAL.model.data_url(checksum)
                 )
                 res = requests.put(
-                    url, data=data, auth=self.auth, headers=CLU.headers
+                    url, data=data, auth=self.auth, headers=DATAPORTAL.headers
                 )
             else:
                 raise ValueError(f"{self}, missing checksum")
@@ -160,43 +151,12 @@ class Submission:
         stdout.write(f"{info_str}\n")
 
 
-def get_submissions(config: Config) -> list[Submission]:
-    submissions: list[Submission] = []
-    auth = (config.user_account.username, config.user_account.password)
-    for date, iconf in itertools.product(config.dates, config.instrument):
-        for f in get_files(date, iconf.path_fmt):
-            metadata_instrument = InstrumentMetadata(
-                site=iconf.site,
-                measurement_date=date,
-                filename=f.name,
-                checksum=None,
-                instrument=iconf.instrument,
-                instrument_pid=iconf.instrument_pid,
-            )
-            submissions.append(
-                Submission(path=f, metadata=metadata_instrument, auth=auth)
-            )
-
-    for date, mconf in itertools.product(config.dates, config.model):
-        for f in get_files(date, mconf.path_fmt):
-            metadata_model = ModelMetadata(
-                site=mconf.site,
-                measurement_date=date,
-                filename=f.name,
-                checksum=None,
-                model=mconf.model,
-            )
-            submissions.append(
-                Submission(path=f, metadata=metadata_model, auth=auth)
-            )
-
-    return submissions
-
-
-def get_files(date: datetime.date, path_fmt: str) -> list[Path]:
-    files: list[Path] = []
-    for p in glob.glob(date.strftime(path_fmt)):
-        path = Path(p)
-        if path.is_file():
-            files.append(path)
-    return files
+def compute_checksum(path: Path):
+    BLOCK_SIZE = 512
+    md5hash = hashlib.md5()
+    with path.open("rb") as f:
+        chunk = f.read(BLOCK_SIZE)
+        while chunk:
+            md5hash.update(chunk)
+            chunk = f.read(BLOCK_SIZE)
+    return md5hash.hexdigest()

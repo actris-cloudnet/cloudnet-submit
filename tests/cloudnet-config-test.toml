@@ -1,0 +1,19 @@
+[user_account]
+username = "alice"
+password = "alicesSecretPassword"
+
+[[instrument]]
+site    =  "mace-head"
+instrument =  "chm15k"
+instrument_pid = "pidstring"
+path_fmt   =  "data/mace-head/chm15k/%Y/%m/%Y%m%d_MaceHead_CHM.nc"
+
+[[instrument]]
+site    =  "granada"
+instrument =  "rpg-fmcw-94"
+path_fmt   =  "data/granada/rpg-fmcw-94/%Y-%m/doppler-%Y-%m-%d-ID*.lv"
+
+[[model]]
+site    =  "hyytiala"
+model      =  "ecmwf"
+path_fmt   =  "data/hyytiala/ecmwf/%Y/%Y%m%d_hyytiala_ecmwf.nc"
