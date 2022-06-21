@@ -3,6 +3,7 @@ import shutil
 import sys
 
 import pytest
+import requests
 
 from .cfg import test_config_fname
 from .generate_testdata import generate_testdata
@@ -36,3 +37,24 @@ def capture_stdout(monkeypatch):
 
     monkeypatch.setattr(sys.stdout, "write", mock_write)
     return buffer
+
+
+@pytest.fixture
+def mock_request(monkeypatch):
+    reqs = {"checksums": []}
+
+    class Req:
+        def __init__(self, ok=True, status_code=200):
+            self.ok = ok
+            self.status_code = status_code
+
+    def mock_post(*args, **kwargs):
+        reqs["checksums"].append(kwargs["json"]["checksum"])
+        return Req()
+
+    def mock_put(*args, **kwargs):
+        return Req(status_code=201)
+
+    monkeypatch.setattr(requests, "post", mock_post)
+    monkeypatch.setattr(requests, "put", mock_put)
+    return reqs

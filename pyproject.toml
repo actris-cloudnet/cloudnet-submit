@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 
 [tool.pytest.ini_options]
-addopts = "--cov=cloudnet_submit"
+addopts = "--cov=cloudnet_submit --cov-report html"
 testpaths = [
     "tests",
 ]
