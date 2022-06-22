@@ -3,7 +3,7 @@
 
 ## Installation
 
-### Linux/MacOs
+### Linux/MacOS
 If you have `python` and `pip` installed (`python >= 3.8`),
 run the command:
 ```sh
@@ -31,7 +31,7 @@ cloudnet-submit --version
 
 If not, you can use an alternative way to run the program:
 ```sh
-python -m cloudnet-submit --version
+python -m cloudnet_submit --version
 ```
 
 
@@ -94,7 +94,7 @@ You can also use wildcard character `*` in `path_fmt` field.
 
 By default, `cloudnet-submit` expects the `cloudnet-config.toml` file to be
 in your working directory.
-You can also use '--config' flag to define another location and name of the config file:
+You can also use `--config` flag to define another location and name of the config file:
 ```sh
 cloudnet-submit --config /path/to/your/config.toml
 ```
