@@ -8,6 +8,8 @@ from sys import stdout
 from typing import Union
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 from .cfg import Dataportal as DataportalConfig
 
@@ -39,6 +41,8 @@ class Status:
     data_ok: bool = False
     metadata: Union[int, None] = None
     data: Union[int, None] = None
+    metadata_msg: Union[str, None] = None
+    data_msg: Union[str, None] = None
 
 
 class Submission:
@@ -52,6 +56,7 @@ class Submission:
         self.metadata = metadata
         self.auth = auth
         self.status = Status()
+        self.session = make_session()
 
     def __gt__(self, other):
         return (self.metadata.measurement_date, self.metadata.site) > (
@@ -64,16 +69,15 @@ class Submission:
         site = self.metadata.site
         date = str(self.metadata.measurement_date)
         fname = self.metadata.filename
+        path_dir = str(self.path.parent)
         return (
             f"{site:<10} {model_or_instrument:<15} "
-            + f"{date:<15} {fname:<30}"
+            + f"{date:<12} file: {fname:<30}"
+            + f"dir: {path_dir}"
         )
 
     def __str_dry__(self):
-        model_or_instrument = self.get_model_or_instrument()
-        site = self.metadata.site
-        date = str(self.metadata.measurement_date)
-        return f"{site:<10} {model_or_instrument:<15} {date:<15} {self.path}"
+        return str(self)
 
     def get_model_or_instrument(self) -> str:
         if isinstance(self.metadata, InstrumentMetadata):
@@ -98,16 +102,17 @@ class Submission:
         if isinstance(self.metadata, InstrumentMetadata):
             body["instrument"] = self.metadata.instrument
             if isinstance(self.metadata.instrument_pid, str):
-                body["instrument_pid"] = self.metadata.instrument_pid
+                body["instrumentPid"] = self.metadata.instrument_pid
             url = DATAPORTAL.instrument.metadata_url
         else:
             body["model"] = self.metadata.model
             url = DATAPORTAL.model.metadata_url
 
-        res = requests.post(
+        res = self.session.post(
             url, json=body, auth=self.auth, headers=DATAPORTAL.headers
         )
         self.status.metadata = res.status_code
+        self.status.metadata_msg = res.text
         if res.ok:
             self.status.metadata_ok = True
 
@@ -120,23 +125,28 @@ class Submission:
                     if isinstance(self.metadata, InstrumentMetadata)
                     else DATAPORTAL.model.data_url(checksum)
                 )
-                res = requests.put(
+                res = self.session.put(
                     url, data=data, auth=self.auth, headers=DATAPORTAL.headers
                 )
             else:
                 raise ValueError(f"{self}, missing checksum")
         self.status.data = res.status_code
+        self.status.data_msg = res.text
         if res.ok:
             self.status.data_ok = True
 
-    def print_status(self, ret):
+    def print_status(self, end):
         meta = (
-            str(self.status.metadata)
-            if self.status.metadata is not None
+            str(self.status.metadata_msg)
+            if self.status.metadata_msg is not None
             else "-"
         )
-        data = str(self.status.data) if self.status.data is not None else "-"
-        stdout.write(f"[metadata: {meta:<3} data: {data:<3}] {self}{ret}")
+        data = (
+            str(self.status.data_msg)
+            if self.status.data_msg is not None
+            else "-"
+        )
+        stdout.write(f"[meta: {meta} | data: {data}] {self}{end}")
 
     def submit(self):
         self.print_status("\r")
@@ -149,6 +159,14 @@ class Submission:
     def dry_run(self):
         info_str = self.__str_dry__()
         stdout.write(f"{info_str}\n")
+
+
+def make_session() -> requests.Session:
+    retries = Retry(total=10, backoff_factor=0.2)
+    adapter = HTTPAdapter(max_retries=retries)
+    session = requests.Session()
+    session.mount("https://", adapter)
+    return session
 
 
 def compute_checksum(path: Path):

@@ -47,6 +47,20 @@ def mock_request(monkeypatch):
         def __init__(self, ok=True, status_code=200):
             self.ok = ok
             self.status_code = status_code
+            if self.status_code == 200:
+                self.text = "OK"
+            elif self.status_code == 201:
+                self.text = "Created"
+            elif self.status_code == 400:
+                self.text = "Bad Request"
+            elif self.status_code == 401:
+                self.text = "Unauthorized"
+            elif self.status_code == 409:
+                self.text = "Conflict"
+            elif self.status_code == 422:
+                self.text = "Unprocessable Entity"
+            else:
+                self.text = "-"
 
     def mock_post(*args, **kwargs):
         reqs["checksums"].append(kwargs["json"]["checksum"])
@@ -55,6 +69,6 @@ def mock_request(monkeypatch):
     def mock_put(*args, **kwargs):
         return Req(status_code=201)
 
-    monkeypatch.setattr(requests, "post", mock_post)
-    monkeypatch.setattr(requests, "put", mock_put)
+    monkeypatch.setattr(requests.Session, "post", mock_post)
+    monkeypatch.setattr(requests.Session, "put", mock_put)
     return reqs

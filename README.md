@@ -3,18 +3,52 @@
 
 ## Installation
 
+### Linux/MacOs
+If you have `python` and `pip` installed (`python >= 3.8`),
+run the command:
 ```sh
 pip install cloudnet-submit
 ```
 
+After that, you can use `cloudnet-submit` command to run the program.
+
+### Windows
+If you are using Windows Subsystem for Linux,
+then the aforementioned Linux installation should work.
+
+If you are using windows command prompt
+and have `python` and `pip` installed,
+you can install `cloudnet-submit` with `pip`:
+
+```sh
+pip install cloudnet-submit
+```
+
+Test if the `cloudnet-submit` command works:
+```sh
+cloudnet-submit --version
+```
+
+If not, you can use an alternative way to run the program:
+```sh
+python -m cloudnet-submit --version
+```
+
+
+
 ## Getting started
+
+### Configuration file
 
 Generate a configuration file:
 ```sh
-cloudnet-submit-generate-config
+cloudnet-submit --generate-config
 ```
 
 This will generate a `cloudnet-config.toml` file in your working directory.
+
+
+
 Update your submission credentials in the `user_account` section,
 and update `site`, `instrument`, `instrument_pid` and `path_fmt` fields
 to match your instrument/model setup. Remove unnecessary instrument and model sections.
@@ -57,9 +91,19 @@ Use the following format codes:
 
 You can also use wildcard character `*` in `path_fmt` field.
 
+
+By default, `cloudnet-submit` expects the `cloudnet-config.toml` file to be
+in your working directory.
+You can also use '--config' flag to define another location and name of the config file:
+```sh
+cloudnet-submit --config /path/to/your/config.toml
+```
+
+### Usage
+
 By default, `cloudnet-submit` submits data from the past three days.
 
-Use `--dry-run` to list files would be submitted:
+Use `--dry-run` to list files that would be submitted:
 ```sh
 cloudnet-submit --dry-run
 ```
@@ -94,3 +138,7 @@ See all the options:
 ```sh
 cloudnet-submit --help
 ```
+
+## Feedback and contact
+- Bugs, feature requests, documentation: [Create an issue](https://github.com/actris-cloudnet/cloudnet-submit/issues/new/choose) on Github
+- Or just [send us mail](mailto:actris-cloudnet@fmi.fi) :)

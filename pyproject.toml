@@ -22,3 +22,6 @@ warn_unused_ignores = true
 line-length = 79
 target-version = ['py38']
 preview = true
+
+[tool.isort]
+line_length = 79

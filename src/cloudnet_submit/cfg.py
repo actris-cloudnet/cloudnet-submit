@@ -12,6 +12,7 @@ import toml
 
 from . import __version__
 from .dateutils import date_parser
+from .generate_config import generate_config
 
 example_config_fname = "cloudnet-config-example.toml"
 default_config_fname = "cloudnet-config.toml"
@@ -78,6 +79,7 @@ def get_args():
     parser.add_argument(
         "--version", action="version", version=f"%(prog)s {__version__}"
     )
+    parser.add_argument("--generate-config", action="store_true")
     parser.add_argument(
         "-c", "--config", type=str, default=default_config_fname
     )
@@ -100,6 +102,10 @@ def last_ndays_arg(val):
 
 def get_config():
     args = get_args()
+    if args.generate_config:
+        generate_config(example_config_fname, args.config)
+        exit(0)
+
     path = Path(args.config)
     if not path.is_file():
         stderr.write(

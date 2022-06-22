@@ -2,7 +2,11 @@ from unittest.mock import patch
 
 import pytest
 
-from cloudnet_submit.cfg import get_config
+from cloudnet_submit.cfg import (
+    default_config_fname,
+    example_config_fname,
+    get_config,
+)
 from cloudnet_submit.generate_config import generate_config
 from cloudnet_submit.utils import get_submissions
 
@@ -10,11 +14,10 @@ from .cfg import test_config_fname
 
 
 def test_generate_config(make_test_dir):
-    with patch("sys.argv", ["prog", "-o", "-"]):
-        generate_config()
-    generate_config()
+    generate_config(example_config_fname, "-")
+    generate_config(example_config_fname, default_config_fname)
     with pytest.raises(FileExistsError):
-        generate_config()
+        generate_config(example_config_fname, default_config_fname)
 
 
 def test_submissions(make_data, mock_request):
