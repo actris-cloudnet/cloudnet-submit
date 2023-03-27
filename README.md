@@ -67,6 +67,14 @@ instrument_pid = "https://hdl.handle.net/21.12132/3.191564170f8a4686"
 path_fmt       = "/home/alice/data/hyytiala/rpg-fmcw-94/%Y/%m/%Y%m%d_hyytiala.nc"
 
 [[instrument]]
+# you can have additional sections for the same instrument
+# e.g. for different path
+site           = "hyytiala"
+instrument     = "rpg-fmcw-94"
+instrument_pid = "https://hdl.handle.net/21.12132/3.191564170f8a4686"
+path_fmt       = "/home/another-path/data/hyytiala/rpg-fmcw-94/%Y/%m/%Y%m%d_hyytiala.nc"
+
+[[instrument]]
 site           = "granada"
 instrument     = "chm15k"
 path_fmt       = "/home/alice/data/granada/chm/%Y-%m/chm_grandada_%Y-%m-%d-*.nc"
