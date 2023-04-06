@@ -83,6 +83,15 @@ path_fmt       = "/home/alice/data/granada/chm/%Y-%m/chm_grandada_%Y-%m-%d-*.nc"
 site           = "hyytiala"
 model          = "ecmwf"
 path_fmt       = "/home/alice/data/hyytiala/ecmwf/%Y/%Y%m%d_hyytiala_ecmwf.nc"
+
+
+# You can use proxies (optional)
+[network.proxies]
+http = "http://10.10.1.10:3128"
+https = "http://10.10.1.10:1080"
+# Alternatively, You can define proxies as environment variables
+# HTTP_PROXY and HTTPS_PROXY
+# see: https://requests.readthedocs.io/en/latest/user/advanced/#proxies
 ```
 
 `cloudnet-submit` will look for files specified in the `path_fmt` field

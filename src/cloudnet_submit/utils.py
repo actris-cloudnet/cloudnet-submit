@@ -31,7 +31,12 @@ def get_submissions(config: Config) -> List[Submission]:
                 instrument_pid=iconf.instrument_pid,
             )
             submissions.append(
-                Submission(path=f, metadata=metadata_instrument, auth=auth)
+                Submission(
+                    path=f,
+                    metadata=metadata_instrument,
+                    auth=auth,
+                    proxies=config.proxies,
+                )
             )
 
     for date, mconf in itertools.product(config.dates, config.model):
@@ -44,7 +49,12 @@ def get_submissions(config: Config) -> List[Submission]:
                 model=mconf.model,
             )
             submissions.append(
-                Submission(path=f, metadata=metadata_model, auth=auth)
+                Submission(
+                    path=f,
+                    metadata=metadata_model,
+                    auth=auth,
+                    proxies=config.proxies,
+                )
             )
 
     return submissions

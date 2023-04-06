@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 import datetime
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from platform import platform
 from sys import stderr
@@ -51,6 +51,15 @@ class UserAccountConfig:
 
 
 @dataclass
+class ProxyConfig:
+    http: Union[str, None] = None
+    https: Union[str, None] = None
+
+    def asdict(self) -> dict:
+        return asdict(self)
+
+
+@dataclass
 class InstrumentConfig:
     site: str
     instrument: str
@@ -68,6 +77,7 @@ class ModelConfig:
 @dataclass
 class Config:
     user_account: UserAccountConfig
+    proxies: ProxyConfig
     instrument: list[InstrumentConfig]
     model: list[ModelConfig]
     dry_run: bool
@@ -116,12 +126,23 @@ def get_config():
     user_conf = get_user_account_config(config)
     instrument_conf = get_instrument_config(config)
     model_conf = get_model_config(config)
+    proxy_conf = get_proxy_config(config)
+    print(proxy_conf)
     return Config(
         user_account=user_conf,
+        proxies=proxy_conf,
         instrument=instrument_conf,
         model=model_conf,
         dry_run=args.dry_run,
         dates=get_dates(args),
+    )
+
+
+def get_proxy_config(config) -> ProxyConfig:
+    proxies = config.get("network", {}).get("proxies", {})
+    return ProxyConfig(
+        http=proxies.get("http", None),
+        https=proxies.get("https", None),
     )
 
 
@@ -139,9 +160,11 @@ def get_instrument_config(config) -> list[InstrumentConfig]:
             InstrumentConfig(
                 site=iconf["site"],
                 instrument=iconf["instrument"],
-                instrument_pid=iconf["instrument_pid"]
-                if "instrument_pid" in iconf
-                else None,
+                instrument_pid=(
+                    iconf["instrument_pid"]
+                    if "instrument_pid" in iconf
+                    else None
+                ),
                 path_fmt=iconf["path_fmt"],
             )
         )

@@ -12,6 +12,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from .cfg import Dataportal as DataportalConfig
+from .cfg import ProxyConfig
 
 DATAPORTAL = DataportalConfig()
 
@@ -43,6 +44,7 @@ class Status:
     data: Union[int, None] = None
     metadata_msg: Union[str, None] = None
     data_msg: Union[str, None] = None
+    proxies: ProxyConfig = ProxyConfig()
 
 
 class Submission:
@@ -51,12 +53,13 @@ class Submission:
         path: Path,
         metadata: Union[InstrumentMetadata, ModelMetadata],
         auth: tuple[str, str],
+        proxies: ProxyConfig,
     ):
         self.path = path
         self.metadata = metadata
         self.auth = auth
         self.status = Status()
-        self.session = make_session()
+        self.session = make_session(proxies)
 
     def __gt__(self, other):
         return (self.metadata.measurement_date, self.metadata.site) > (
@@ -161,10 +164,11 @@ class Submission:
         stdout.write(f"{info_str}\n")
 
 
-def make_session() -> requests.Session:
+def make_session(proxies: ProxyConfig) -> requests.Session:
     retries = Retry(total=10, backoff_factor=0.2)
     adapter = HTTPAdapter(max_retries=retries)
     session = requests.Session()
+    session.proxies.update(proxies.asdict())
     session.mount("https://", adapter)
     return session
 
