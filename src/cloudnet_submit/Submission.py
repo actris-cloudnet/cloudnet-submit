@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 import hashlib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from sys import stdout
 from typing import Union
@@ -44,7 +44,7 @@ class Status:
     data: Union[int, None] = None
     metadata_msg: Union[str, None] = None
     data_msg: Union[str, None] = None
-    proxies: ProxyConfig = ProxyConfig()
+    proxies: ProxyConfig = field(default_factory=lambda: ProxyConfig())
 
 
 class Submission:

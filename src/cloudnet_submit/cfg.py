@@ -127,7 +127,6 @@ def get_config():
     instrument_conf = get_instrument_config(config)
     model_conf = get_model_config(config)
     proxy_conf = get_proxy_config(config)
-    print(proxy_conf)
     return Config(
         user_account=user_conf,
         proxies=proxy_conf,
