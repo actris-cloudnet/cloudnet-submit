@@ -199,12 +199,13 @@ def get_dates(args) -> list[datetime.date]:
     for date in args.date if args.date else []:
         dates.add(date)
     # Date range from --from-date --to-date arguments
-    to_date = args.to_date if args.to_date else today
-    from_date = args.from_date if args.from_date else min(to_date, today)
-    idate = from_date
-    while idate <= to_date:
-        dates.add(idate)
-        idate += one_day
+    if not (args.from_date is None and args.to_date is None):
+        to_date = args.to_date if args.to_date else today
+        from_date = args.from_date if args.from_date else min(to_date, today)
+        idate = from_date
+        while idate <= to_date:
+            dates.add(idate)
+            idate += one_day
     # Dates from --last-ndays argument
     if args.last_ndays:
         idate = today - datetime.timedelta(days=args.last_ndays - 1)
