@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 import hashlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from sys import stdout
 from typing import Union

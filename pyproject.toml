@@ -83,7 +83,8 @@ profile= "black"
 line_length = 88
 
 [tool.pylint]
-ignore-patterns = "test_.*\\.py"
+ignore-patterns = "test_.*\\.py,release"
+ignore-paths = "^tests/.*"
 good-names = ["i", "j", "k", "f",]
 max-line-length = 88
 disable = [
@@ -91,4 +92,5 @@ disable = [
   "missing-class-docstring",
   "missing-function-docstring",
   "too-few-public-methods",
+  "too-many-arguments"
 ]
