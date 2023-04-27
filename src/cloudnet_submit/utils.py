@@ -29,13 +29,15 @@ def get_submissions(config: Config) -> List[Submission]:
                 checksum=None,
                 instrument=iconf.instrument,
                 instrument_pid=iconf.instrument_pid,
+                tags=iconf.tags,
             )
             submissions.append(
                 Submission(
                     path=f,
                     metadata=metadata_instrument,
                     auth=auth,
-                    proxies=config.proxies,
+                    dataportal_config=config.dataportal_config,
+                    proxy_config=config.proxy_config,
                 )
             )
 
@@ -53,7 +55,8 @@ def get_submissions(config: Config) -> List[Submission]:
                     path=f,
                     metadata=metadata_model,
                     auth=auth,
-                    proxies=config.proxies,
+                    dataportal_config=config.dataportal_config,
+                    proxy_config=config.proxy_config,
                 )
             )
 

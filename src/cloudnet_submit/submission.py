@@ -11,10 +11,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from .cfg import Dataportal as DataportalConfig
-from .cfg import ProxyConfig
-
-DATAPORTAL = DataportalConfig()
+from .cfg import DataportalConfig, ProxyConfig
 
 
 @dataclass
@@ -29,6 +26,7 @@ class Metadata:
 class InstrumentMetadata(Metadata):
     instrument: str
     instrument_pid: Union[str, None]
+    tags: Union[list[str], None]
 
 
 @dataclass
@@ -44,22 +42,26 @@ class Status:
     data: Union[int, None] = None
     metadata_msg: Union[str, None] = None
     data_msg: Union[str, None] = None
-    proxies: ProxyConfig = field(default_factory=ProxyConfig)
 
 
 class Submission:
+    session = None
+
     def __init__(
         self,
         path: Path,
         metadata: Union[InstrumentMetadata, ModelMetadata],
         auth: tuple[str, str],
-        proxies: ProxyConfig,
+        dataportal_config: DataportalConfig,
+        proxy_config: ProxyConfig,
     ):
         self.path = path
         self.metadata = metadata
         self.auth = auth
         self.status = Status()
-        self.session = make_session(proxies)
+        if Submission.session is None:
+            Submission.session = make_session(proxy_config)
+        self.dataportal_config = dataportal_config
 
     def __gt__(self, other):
         return (self.metadata.measurement_date, self.metadata.site) > (
@@ -94,8 +96,10 @@ class Submission:
             raise ValueError(f"Checksum for {self.path} is None")
 
     def submit_metadata(self):
+        if self.session is None:
+            raise TypeError
         self.compute_checksum()
-        body = {
+        body: dict[str, Union[None, str, list[str]]] = {
             "site": self.metadata.site,
             "filename": self.metadata.filename,
             "measurementDate": self.metadata.measurement_date.isoformat(),
@@ -105,13 +109,15 @@ class Submission:
             body["instrument"] = self.metadata.instrument
             if isinstance(self.metadata.instrument_pid, str):
                 body["instrumentPid"] = self.metadata.instrument_pid
-            url = DATAPORTAL.instrument.metadata_url
+            if self.metadata.tags:
+                body["tags"] = self.metadata.tags
+            url = self.dataportal_config.instrument.metadata_url
         else:
             body["model"] = self.metadata.model
-            url = DATAPORTAL.model.metadata_url
+            url = self.dataportal_config.model.metadata_url
 
         res = self.session.post(
-            url, json=body, auth=self.auth, headers=DATAPORTAL.headers
+            url, json=body, auth=self.auth, headers=self.dataportal_config.headers
         )
         self.status.metadata = res.status_code
         self.status.metadata_msg = res.text
@@ -119,16 +125,21 @@ class Submission:
             self.status.metadata_ok = True
 
     def submit_data(self):
+        if self.session is None:
+            raise TypeError
         with self.path.open("rb") as data:
             if isinstance(self.metadata.checksum, str):
                 checksum = self.metadata.checksum
                 url = (
-                    DATAPORTAL.instrument.data_url(checksum)
+                    self.dataportal_config.instrument.data_url(checksum)
                     if isinstance(self.metadata, InstrumentMetadata)
-                    else DATAPORTAL.model.data_url(checksum)
+                    else self.dataportal_config.model.data_url(checksum)
                 )
                 res = self.session.put(
-                    url, data=data, auth=self.auth, headers=DATAPORTAL.headers
+                    url,
+                    data=data,
+                    auth=self.auth,
+                    headers=self.dataportal_config.headers,
                 )
             else:
                 raise ValueError(f"{self}, missing checksum")
@@ -159,11 +170,12 @@ class Submission:
         stdout.write(f"{info_str}\n")
 
 
-def make_session(proxies: ProxyConfig) -> requests.Session:
+def make_session(proxy_config: ProxyConfig) -> requests.Session:
     retries = Retry(total=10, backoff_factor=0.2)
     adapter = HTTPAdapter(max_retries=retries)
     session = requests.Session()
-    session.proxies.update(proxies.asdict())
+    session.proxies.update(proxy_config.asdict())
+    session.mount("http://", adapter)
     session.mount("https://", adapter)
     return session
 

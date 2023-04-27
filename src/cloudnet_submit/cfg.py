@@ -18,14 +18,17 @@ EXAMPLE_CONFIG_FNAME = "cloudnet-config-example.toml"
 DEFAULT_CONFIG_FNAME = "cloudnet-config.toml"
 
 
-class Dataportal:
-    def __init__(self, base_url: str = "https://cloudnet.fmi.fi"):
+class DataportalConfig:
+    def __init__(self, base_url):
         self.base_url: str = base_url
         self.instrument = self.Instrument(self.base_url)
         self.model = self.Model(self.base_url)
         self.headers: Dict[str, str] = {
             "User-Agent": f"cloudnet-submit/{__version__} ({platform()})"
         }
+
+    def __str__(self) -> str:
+        return f"DataportalConfig: base_url={self.base_url}"
 
     class Instrument:
         def __init__(self, base_url: str):
@@ -65,6 +68,7 @@ class InstrumentConfig:
     instrument: str
     instrument_pid: Union[str, None]
     path_fmt: str
+    tags: Union[list[str], None]
 
 
 @dataclass
@@ -77,7 +81,8 @@ class ModelConfig:
 @dataclass
 class Config:
     user_account: UserAccountConfig
-    proxies: ProxyConfig
+    dataportal_config: DataportalConfig
+    proxy_config: ProxyConfig
     instrument: list[InstrumentConfig]
     model: list[ModelConfig]
     dry_run: bool
@@ -96,6 +101,8 @@ def get_args():
     parser.add_argument("-l", "--last-ndays", type=last_ndays_arg)
     parser.add_argument("--from-date", type=date_parser)
     parser.add_argument("--to-date", type=date_parser)
+    parser.add_argument("--host", type=str, default="https://cloudnet.fmi.fi")
+    parser.add_argument("--port", type=str)
     return parser.parse_args()
 
 
@@ -116,16 +123,14 @@ def get_config():
     if not path.is_file():
         sys.stderr.write(f'"{path}" does not exist. Cannot read the configuration.\n')
         sys.exit(1)
-    config = toml.load(path)
-    user_conf = get_user_account_config(config)
-    instrument_conf = get_instrument_config(config)
-    model_conf = get_model_config(config)
-    proxy_conf = get_proxy_config(config)
+    config_toml = toml.load(path)
+    base_url = args.host + (f":{args.port}" if args.port else "")
     return Config(
-        user_account=user_conf,
-        proxies=proxy_conf,
-        instrument=instrument_conf,
-        model=model_conf,
+        user_account=get_user_account_config(config_toml),
+        dataportal_config=DataportalConfig(base_url=base_url),
+        proxy_config=get_proxy_config(config_toml),
+        instrument=get_instrument_config(config_toml),
+        model=get_model_config(config_toml),
         dry_run=args.dry_run,
         dates=get_dates(args),
     )
@@ -153,10 +158,9 @@ def get_instrument_config(config) -> list[InstrumentConfig]:
             InstrumentConfig(
                 site=iconf["site"],
                 instrument=iconf["instrument"],
-                instrument_pid=(
-                    iconf["instrument_pid"] if "instrument_pid" in iconf else None
-                ),
+                instrument_pid=iconf.get("instrument_pid", None),
                 path_fmt=iconf["path_fmt"],
+                tags=iconf.get("tags", None),
             )
         )
     return instrument_configs

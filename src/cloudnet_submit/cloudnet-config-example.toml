@@ -9,6 +9,21 @@ instrument_pid = "https://hdl.handle.net/21.12132/3.191564170f8a4686"
 path_fmt   =  "/home/alice/data/hyytiala/rpg-fmcw-94/%Y/%m/%Y%m%d_hyytiala.nc"
 
 [[instrument]]
+site    =  "hyytiala"
+instrument =  "halo-doppler-lidar"
+instrument_pid = "https://hdl.handle.net/21.12132/3.421272f219be4f97"
+path_fmt   =  "dlidar34/Proc/%Y/%Y%m/%Y%m%d/Stare_34_%Y%m%d_*.hpl"
+tags = ["co"]
+
+[[instrument]]
+site    =  "hyytiala"
+instrument =  "halo-doppler-lidar"
+instrument_pid = "https://hdl.handle.net/21.12132/3.421272f219be4f97"
+path_fmt   =  "dlidar34/Proc/cross/%Y/%Y%m/%Y%m%d/Stare_34_%Y%m%d_*.hpl"
+tags = ["cross"]
+
+
+[[instrument]]
 site    =  "granada"
 instrument =  "chm15k"
 path_fmt   =  "/home/alice/data/granada/chm/%Y-%m/chm_grandada_%Y-%m-%d-*.nc"
