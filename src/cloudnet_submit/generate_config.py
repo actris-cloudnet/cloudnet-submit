@@ -12,7 +12,7 @@ def generate_config(src: str, trg: str) -> None:
         raise FileExistsError(
             f'Cannot generate a configuration file, "{path}" already exists.'
         )
-    elif trg == "-":
+    if trg == "-":
         stdout.buffer.write(example_config)
     else:
         with path.open("wb") as f:

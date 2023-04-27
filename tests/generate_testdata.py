@@ -47,6 +47,4 @@ def generate_random_file(path_str: str) -> Path:
 
 
 def random_string(length=10):
-    return "".join(
-        random.choices(string.ascii_lowercase + string.digits, k=length)
-    )
+    return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))

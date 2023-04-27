@@ -44,7 +44,7 @@ class Status:
     data: Union[int, None] = None
     metadata_msg: Union[str, None] = None
     data_msg: Union[str, None] = None
-    proxies: ProxyConfig = field(default_factory=lambda: ProxyConfig())
+    proxies: ProxyConfig = field(default_factory=ProxyConfig)
 
 
 class Submission:
@@ -85,8 +85,7 @@ class Submission:
     def get_model_or_instrument(self) -> str:
         if isinstance(self.metadata, InstrumentMetadata):
             return self.metadata.instrument
-        else:
-            return self.metadata.model
+        return self.metadata.model
 
     def compute_checksum(self):
         if self.metadata.checksum is None:
@@ -144,11 +143,7 @@ class Submission:
             if self.status.metadata_msg is not None
             else "-"
         )
-        data = (
-            str(self.status.data_msg)
-            if self.status.data_msg is not None
-            else "-"
-        )
+        data = str(self.status.data_msg) if self.status.data_msg is not None else "-"
         stdout.write(f"[meta: {meta} | data: {data}] {self}{end}")
 
     def submit(self):
@@ -174,11 +169,11 @@ def make_session(proxies: ProxyConfig) -> requests.Session:
 
 
 def compute_checksum(path: Path):
-    BLOCK_SIZE = 512
+    block_size = 512
     md5hash = hashlib.md5()
     with path.open("rb") as f:
-        chunk = f.read(BLOCK_SIZE)
+        chunk = f.read(block_size)
         while chunk:
             md5hash.update(chunk)
-            chunk = f.read(BLOCK_SIZE)
+            chunk = f.read(block_size)
     return md5hash.hexdigest()

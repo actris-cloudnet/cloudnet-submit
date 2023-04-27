@@ -1,0 +1,17 @@
+[flake8]
+max-line-length = 88
+
+exclude =
+  .git,
+  __pycache__,
+  .mypy_cache
+
+filename = *.py
+
+#E203: whitespace before ",", ";", or ":"
+#F401: module imported but unused
+#W503: line break before binary operator
+ignore =
+  E203,
+  F401
+  W503,

@@ -5,13 +5,13 @@ from pathlib import Path
 from typing import List
 
 from .cfg import Config
-from .Submission import InstrumentMetadata, ModelMetadata, Submission
+from .submission import InstrumentMetadata, ModelMetadata, Submission
 
 
 def get_files(date: datetime.date, path_fmt: str) -> List[Path]:
     files: List[Path] = []
-    for p in glob.glob(date.strftime(path_fmt)):
-        path = Path(p)
+    for path_ in glob.glob(date.strftime(path_fmt)):
+        path = Path(path_)
         if path.is_file():
             files.append(path)
     return files

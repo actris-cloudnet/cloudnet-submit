@@ -1,0 +1,3 @@
+include src/cloudnet_submit/cloudnet-config-example.toml
+include tests/cloudnet-config-test.toml
+global-include py.typed

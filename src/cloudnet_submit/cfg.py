@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from platform import platform
-from sys import stderr
 from typing import Dict, Union
 
 import toml
@@ -14,8 +14,8 @@ from . import __version__
 from .dateutils import date_parser
 from .generate_config import generate_config
 
-example_config_fname = "cloudnet-config-example.toml"
-default_config_fname = "cloudnet-config.toml"
+EXAMPLE_CONFIG_FNAME = "cloudnet-config-example.toml"
+DEFAULT_CONFIG_FNAME = "cloudnet-config.toml"
 
 
 class Dataportal:
@@ -90,9 +90,7 @@ def get_args():
         "--version", action="version", version=f"%(prog)s {__version__}"
     )
     parser.add_argument("--generate-config", action="store_true")
-    parser.add_argument(
-        "-c", "--config", type=str, default=default_config_fname
-    )
+    parser.add_argument("-c", "--config", type=str, default=DEFAULT_CONFIG_FNAME)
     parser.add_argument("-n", "--dry-run", action="store_true")
     parser.add_argument("-d", "--date", type=date_parser, nargs="*")
     parser.add_argument("-l", "--last-ndays", type=last_ndays_arg)
@@ -104,24 +102,20 @@ def get_args():
 def last_ndays_arg(val):
     ndays = int(val)
     if ndays <= 0:
-        raise argparse.ArgumentTypeError(
-            f"# of days must be positive: {ndays}"
-        )
+        raise argparse.ArgumentTypeError(f"# of days must be positive: {ndays}")
     return ndays
 
 
 def get_config():
     args = get_args()
     if args.generate_config:
-        generate_config(example_config_fname, args.config)
-        exit(0)
+        generate_config(EXAMPLE_CONFIG_FNAME, args.config)
+        sys.exit(0)
 
     path = Path(args.config)
     if not path.is_file():
-        stderr.write(
-            f'"{path}" does not exist. Cannot read the configuration.\n'
-        )
-        exit(1)
+        sys.stderr.write(f'"{path}" does not exist. Cannot read the configuration.\n')
+        sys.exit(1)
     config = toml.load(path)
     user_conf = get_user_account_config(config)
     instrument_conf = get_instrument_config(config)
@@ -160,9 +154,7 @@ def get_instrument_config(config) -> list[InstrumentConfig]:
                 site=iconf["site"],
                 instrument=iconf["instrument"],
                 instrument_pid=(
-                    iconf["instrument_pid"]
-                    if "instrument_pid" in iconf
-                    else None
+                    iconf["instrument_pid"] if "instrument_pid" in iconf else None
                 ),
                 path_fmt=iconf["path_fmt"],
             )
@@ -187,10 +179,7 @@ def get_dates(args) -> list[datetime.date]:
     today = datetime.date.today()
     one_day = datetime.timedelta(days=1)
     if all(
-        [
-            a is None
-            for a in [args.date, args.from_date, args.to_date, args.last_ndays]
-        ]
+        a is None for a in [args.date, args.from_date, args.to_date, args.last_ndays]
     ):
         last_three_days = [today - i * one_day for i in range(3)]
         return last_three_days
