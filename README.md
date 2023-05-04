@@ -1,10 +1,10 @@
-# ACTRIS Cloudnet data submission tool
+# Cloudnet data submission tool
 ![Tests](https://github.com/actris-cloudnet/cloudnet-submit/actions/workflows/tests.yml/badge.svg)
 [![PyPI version](https://badge.fury.io/py/cloudnet-submit.svg)](https://badge.fury.io/py/cloudnet-submit)
 
 ## Installation
 
-### Linux/MacOS
+### Linux/macOS
 If you have `python` and `pip` installed (`python >= 3.8`),
 run the command:
 ```sh
