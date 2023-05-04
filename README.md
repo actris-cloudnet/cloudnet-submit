@@ -64,7 +64,7 @@ password       = "alicesSecretPassword"
 site           = "hyytiala"
 instrument     = "rpg-fmcw-94"
 instrument_pid = "https://hdl.handle.net/21.12132/3.191564170f8a4686"
-path_fmt       = "/home/alice/data/hyytiala/rpg-fmcw-94/%Y/%m/%Y%m%d_hyytiala.nc"
+path_fmt       = "/data/hyytiala/rpg-fmcw-94/%Y/%m/%y%m%d_*_P10_ZEN.LV1"
 
 [[instrument]]
 # you can have additional sections for the same instrument
@@ -72,22 +72,22 @@ path_fmt       = "/home/alice/data/hyytiala/rpg-fmcw-94/%Y/%m/%Y%m%d_hyytiala.nc
 site           = "hyytiala"
 instrument     = "rpg-fmcw-94"
 instrument_pid = "https://hdl.handle.net/21.12132/3.191564170f8a4686"
-path_fmt       = "/home/another-path/data/hyytiala/rpg-fmcw-94/%Y/%m/%Y%m%d_hyytiala.nc"
+path_fmt       = "/home/alice/hyytiala/rpg-fmcw-94/%y%m%d_*_P09_ZEN.LV0"
 
 [[instrument]]
 site           = "granada"
 instrument     = "chm15k"
-path_fmt       = "/home/alice/data/granada/chm/%Y-%m/chm_grandada_%Y-%m-%d-*.nc"
+instrument_pid = "https://hdl.handle.net/21.12132/3.77a75f3b32294855"
+path_fmt       = "/data/granada/chm/%Y-%m/%Y%m%d_Granada_CHM170119_*.nc"
 
 [[model]]
 site           = "hyytiala"
 model          = "ecmwf"
-path_fmt       = "/home/alice/data/hyytiala/ecmwf/%Y/%Y%m%d_hyytiala_ecmwf.nc"
-
+path_fmt       = "/data/hyytiala/ecmwf/%Y/%Y%m%d_hyytiala_ecmwf.nc"
 
 # You can use proxies (optional)
 [network.proxies]
-http = "http://10.10.1.10:3128"
+http  = "http://10.10.1.10:3128"
 https = "http://10.10.1.10:1080"
 # Alternatively, You can define proxies as environment variables
 # HTTP_PROXY and HTTPS_PROXY
