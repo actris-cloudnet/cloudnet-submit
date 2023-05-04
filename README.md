@@ -1,5 +1,6 @@
 # ACTRIS Cloudnet data submission tool
 ![Tests](https://github.com/actris-cloudnet/cloudnet-submit/actions/workflows/tests.yml/badge.svg)
+[![PyPI version](https://badge.fury.io/py/cloudnet-submit.svg)](https://badge.fury.io/py/cloudnet-submit)
 
 ## Installation
 
@@ -34,8 +35,6 @@ If not, you can use an alternative way to run the program:
 python -m cloudnet_submit --version
 ```
 
-
-
 ## Getting started
 
 ### Configuration file
@@ -45,14 +44,11 @@ Generate a configuration file:
 cloudnet-submit --generate-config
 ```
 
-This will generate a `cloudnet-config.toml` file in your working directory.
-
-
+This will generate a file named `cloudnet-config.toml` in your working directory.
 
 Update your submission credentials in the `user_account` section,
 and update `site`, `instrument`, `instrument_pid` and `path_fmt` fields
 to match your instrument/model setup. Remove unnecessary instrument and model sections.
-
 
 ```toml
 # cloudnet-config.toml
@@ -108,10 +104,9 @@ Use the following format codes:
 
 You can also use wildcard character `*` in `path_fmt` field.
 
-
 By default, `cloudnet-submit` expects the `cloudnet-config.toml` file to be
 in your working directory.
-You can also use `--config` flag to define another location and name of the config file:
+You can also use `--config` to specify another location for the config file:
 ```sh
 cloudnet-submit --config /path/to/your/config.toml
 ```
@@ -125,7 +120,7 @@ Use `--dry-run` to list files that would be submitted:
 cloudnet-submit --dry-run
 ```
 
-Submit data to the Cloudnet dataportal:
+Submit data to the Cloudnet data portal:
 ```sh
 cloudnet-submit
 ```
@@ -142,7 +137,7 @@ cloudnet-submit --date 2022-06-21
 
 Or a list of dates:
 ```sh
-cloudnet-submit --date 2022-06-21 2022-05-1
+cloudnet-submit --date 2022-06-21 2022-05-01
 ```
 
 Or a range of dates:
