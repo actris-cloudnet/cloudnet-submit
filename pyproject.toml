@@ -30,9 +30,9 @@ dependencies = [
 ]
 
 [project.urls]
-homepage = "https://github.com/actris-cloudnet/cloudnet-submit"
-repository = "https://github.com/actris-cloudnet/cloudnet-submit"
-changelog = "https://github.com/actris-cloudnet/cloudnet-submit/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/actris-cloudnet/cloudnet-submit"
+Repository = "https://github.com/actris-cloudnet/cloudnet-submit"
+Changelog = "https://github.com/actris-cloudnet/cloudnet-submit/blob/main/CHANGELOG.md"
 "Bug Tracker" = "https://github.com/actris-cloudnet/cloudnet-submit/issues"
 
 [project.optional-dependencies]
