@@ -50,6 +50,13 @@ Update your submission credentials in the `user_account` section,
 and update `site`, `instrument`, `instrument_pid` and `path_fmt` fields
 to match your instrument/model setup. Remove unnecessary instrument and model sections.
 
+You can find `instrument_pid`s from the
+[list of instruments](https://instrumentdb.out.ocp.fmi.fi/).
+If your instrument does not have one yet,
+[fill the form](https://docs.google.com/forms/d/e/1FAIpQLSeY4nvAah-K5xPfF-VMhDbmmY9lq7BbtTDKTT9BZMqT7tC7zA/viewform)
+first.
+
+
 ```toml
 # cloudnet-config.toml
 [user_account]

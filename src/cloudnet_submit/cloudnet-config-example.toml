@@ -2,6 +2,11 @@
 username = "alice"
 password = "alicesSecretPassword"
 
+# instrument_pid:s are listed here:
+# https://instrumentdb.out.ocp.fmi.fi/
+# If your instrument does not have pid yet,
+# fill the form first.
+
 [[instrument]]
 site           = "hyytiala"
 instrument     = "rpg-fmcw-94"
