@@ -180,7 +180,7 @@ def get_model_config(config) -> list[ModelConfig]:
 
 
 def get_dates(args) -> list[datetime.date]:
-    today = datetime.date.today()
+    today = datetime.datetime.utcnow().date()
     one_day = datetime.timedelta(days=1)
     if all(
         a is None for a in [args.date, args.from_date, args.to_date, args.last_ndays]
