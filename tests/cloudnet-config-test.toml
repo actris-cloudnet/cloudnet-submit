@@ -14,6 +14,13 @@ instrument     = "rpg-fmcw-94"
 instrument_pid = "pidstring"
 path_fmt       = "data/granada/rpg-fmcw-94/%Y-%m/doppler-%Y-%m-%d-ID*.lv"
 
+[[instrument]]
+site           = "kenttarova"
+instrument     = "halo-doppler-lidar"
+instrument_pid = "pidstring"
+path_fmt       = "data/kenttarova/halo/system_parameters_1_%Y%m.txt"
+periodicity    = "monthly"
+
 [[model]]
 site     =  "hyytiala"
 model    =  "ecmwf"

@@ -7,7 +7,7 @@ import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from platform import platform
-from typing import Dict, Union
+from typing import Dict, Literal, Union
 
 import toml
 
@@ -69,21 +69,10 @@ class InstrumentConfig:
     instrument_pid: str
     path_fmt: str
     tags: Union[list[str], None]
+    periodicity: Literal["daily", "monthly"]
 
     def __post_init__(self):
-        used = set(re.findall("%[a-z]", self.path_fmt, re.I))
-        year = {"%Y", "%y"}
-        month = {"%m"}
-        day = {"%d"}
-        for exp in (year, month, day):
-            if not used & exp:
-                raise ValueError(
-                    f"path_fmt '{self.path_fmt}' must specify year, month and day"
-                )
-        if invalid := used - year - month - day:
-            plural = "s" if len(invalid) != 1 else ""
-            lst = ", ".join(invalid)
-            raise ValueError(f"Unsupported directive{plural} in path_fmt: {lst}")
+        _validate_path_fmt(self.periodicity, self.path_fmt)
 
 
 @dataclass
@@ -91,6 +80,9 @@ class ModelConfig:
     site: str
     model: str
     path_fmt: str
+
+    def __post_init__(self):
+        _validate_path_fmt("daily", self.path_fmt)
 
 
 @dataclass
@@ -176,6 +168,7 @@ def get_instrument_config(config) -> list[InstrumentConfig]:
                 instrument_pid=iconf["instrument_pid"],
                 path_fmt=iconf["path_fmt"],
                 tags=iconf.get("tags", None),
+                periodicity=iconf.get("periodicity", "daily"),
             )
         )
     return instrument_configs
@@ -222,3 +215,27 @@ def get_dates(args) -> list[datetime.date]:
             idate += one_day
     non_future_dates = [date for date in dates if date <= today]
     return sorted(non_future_dates)
+
+
+def _validate_path_fmt(periodicity: Literal["daily", "monthly"], path_fmt: str) -> None:
+    used = set(re.findall("%[a-z]", path_fmt, re.I))
+    year = {"%Y", "%y"}
+    month = {"%m"}
+    day = {"%d"}
+    required: tuple
+    if periodicity == "daily":
+        required = (year, month, day)
+    elif periodicity == "monthly":
+        required = (year, month)
+    else:
+        raise ValueError(f"Invalid periodicity: {periodicity}")
+    invalid = used
+    for req in required:
+        if not used & req:
+            lst = " or ".join(req)
+            raise ValueError(f"path_fmt '{path_fmt}' must contain {lst}")
+        invalid -= req
+    if invalid:
+        plural = "s" if len(invalid) != 1 else ""
+        lst = ", ".join(invalid)
+        raise ValueError(f"Unsupported directive{plural} in path_fmt: {lst}")
