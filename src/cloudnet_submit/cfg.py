@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import re
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -69,6 +70,21 @@ class InstrumentConfig:
     instrument_pid: Union[str, None]
     path_fmt: str
     tags: Union[list[str], None]
+
+    def __post_init__(self):
+        used = set(re.findall("%[a-z]", self.path_fmt, re.I))
+        year = {"%Y", "%y"}
+        month = {"%m"}
+        day = {"%d"}
+        for exp in (year, month, day):
+            if not used & exp:
+                raise ValueError(
+                    f"path_fmt '{self.path_fmt}' must specify year, month and day"
+                )
+        if invalid := used - year - month - day:
+            plural = "s" if len(invalid) != 1 else ""
+            lst = ", ".join(invalid)
+            raise ValueError(f"Unsupported directive{plural} in path_fmt: {lst}")
 
 
 @dataclass
