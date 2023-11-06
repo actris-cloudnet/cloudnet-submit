@@ -21,6 +21,32 @@ def get_submissions(config: Config) -> List[Submission]:
     submissions: List[Submission] = []
     auth = (config.user_account.username, config.user_account.password)
     for date, iconf in itertools.product(config.dates, config.instrument):
+        if iconf.periodicity != "daily":
+            continue
+        for f in get_files(date, iconf.path_fmt):
+            metadata_instrument = InstrumentMetadata(
+                site=iconf.site,
+                measurement_date=date,
+                filename=f.name,
+                checksum=None,
+                instrument=iconf.instrument,
+                instrument_pid=iconf.instrument_pid,
+                tags=iconf.tags,
+            )
+            submissions.append(
+                Submission(
+                    path=f,
+                    metadata=metadata_instrument,
+                    auth=auth,
+                    dataportal_config=config.dataportal_config,
+                    proxy_config=config.proxy_config,
+                )
+            )
+
+    months = set(date.replace(day=1) for date in config.dates)
+    for date, iconf in itertools.product(months, config.instrument):
+        if iconf.periodicity != "monthly":
+            continue
         for f in get_files(date, iconf.path_fmt):
             metadata_instrument = InstrumentMetadata(
                 site=iconf.site,
