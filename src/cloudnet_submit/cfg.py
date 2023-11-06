@@ -66,7 +66,7 @@ class ProxyConfig:
 class InstrumentConfig:
     site: str
     instrument: str
-    instrument_pid: Union[str, None]
+    instrument_pid: str
     path_fmt: str
     tags: Union[list[str], None]
 
@@ -173,7 +173,7 @@ def get_instrument_config(config) -> list[InstrumentConfig]:
             InstrumentConfig(
                 site=iconf["site"],
                 instrument=iconf["instrument"],
-                instrument_pid=iconf.get("instrument_pid", None),
+                instrument_pid=iconf["instrument_pid"],
                 path_fmt=iconf["path_fmt"],
                 tags=iconf.get("tags", None),
             )

@@ -25,7 +25,7 @@ class Metadata:
 @dataclass
 class InstrumentMetadata(Metadata):
     instrument: str
-    instrument_pid: Union[str, None]
+    instrument_pid: str
     tags: Union[list[str], None]
 
 
@@ -107,8 +107,7 @@ class Submission:
         }
         if isinstance(self.metadata, InstrumentMetadata):
             body["instrument"] = self.metadata.instrument
-            if isinstance(self.metadata.instrument_pid, str):
-                body["instrumentPid"] = self.metadata.instrument_pid
+            body["instrumentPid"] = self.metadata.instrument_pid
             if self.metadata.tags:
                 body["tags"] = self.metadata.tags
             url = self.dataportal_config.instrument.metadata_url
