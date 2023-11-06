@@ -12,7 +12,6 @@ from typing import Dict, Union
 import toml
 
 from . import __version__
-from .dateutils import date_parser
 from .generate_config import generate_config
 
 EXAMPLE_CONFIG_FNAME = "cloudnet-config-example.toml"
@@ -113,10 +112,10 @@ def get_args():
     parser.add_argument("--generate-config", action="store_true")
     parser.add_argument("-c", "--config", type=str, default=DEFAULT_CONFIG_FNAME)
     parser.add_argument("-n", "--dry-run", action="store_true")
-    parser.add_argument("-d", "--date", type=date_parser, nargs="*")
+    parser.add_argument("-d", "--date", type=datetime.date.fromisoformat, nargs="*")
     parser.add_argument("-l", "--last-ndays", type=last_ndays_arg)
-    parser.add_argument("--from-date", type=date_parser)
-    parser.add_argument("--to-date", type=date_parser)
+    parser.add_argument("--from-date", type=datetime.date.fromisoformat)
+    parser.add_argument("--to-date", type=datetime.date.fromisoformat)
     parser.add_argument("--host", type=str, default="https://cloudnet.fmi.fi")
     parser.add_argument("--port", type=str)
     return parser.parse_args()
@@ -196,7 +195,7 @@ def get_model_config(config) -> list[ModelConfig]:
 
 
 def get_dates(args) -> list[datetime.date]:
-    today = datetime.datetime.utcnow().date()
+    today = datetime.datetime.now(tz=datetime.timezone.utc).date()
     one_day = datetime.timedelta(days=1)
     if all(
         a is None for a in [args.date, args.from_date, args.to_date, args.last_ndays]
