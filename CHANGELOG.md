@@ -1,13 +1,18 @@
 # Changelog
-## [0.0.7] - 2023-10-20
+## Unreleased
+
+### Added
+- Add `peridiocity` to instrument configuration with value either `"daily"` or `"monthly"`
+
+### Changed
+- Validate `path_fmt` in instrument and model configuration
+
+## 0.0.7 – 2023-10-20
 
 ### Fixed
 - Get current date in UTC
 
-## [0.0.6] - 2023-08-28
+## 0.0.6 – 2023-08-28
 
 ### Added
 - Links to instrument list
-
-[0.0.6]: https://github.com/actris-cloudnet/cloudnet-submit/releases/tag/v0.0.6
-[0.0.7]: https://github.com/actris-cloudnet/cloudnet-submit/releases/tag/v0.0.7

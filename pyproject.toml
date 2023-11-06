@@ -49,6 +49,10 @@ dev = [
   "types-requests",
   "types-toml",
 ]
+# Not supported on Python <= 3.10
+release = [
+  "release-version"
+]
 [project.scripts]
 cloudnet-submit = "cloudnet_submit.main:main"
 
@@ -94,3 +98,8 @@ disable = [
   "too-few-public-methods",
   "too-many-arguments"
 ]
+
+[tool.release-version]
+filename = "src/cloudnet-submit/version.py"
+pattern = "__version__ = \"(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)\""
+changelog = "CHANGELOG.md"
