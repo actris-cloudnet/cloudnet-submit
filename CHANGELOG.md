@@ -1,8 +1,9 @@
 # Changelog
-## Unreleased
+
+## 0.0.8 – 2023-11-07
 
 ### Added
-- Add `peridiocity` to instrument configuration with value either `"daily"` or `"monthly"`
+- Add `peridiocity` to instrument configuration
 - Print summary of the submitted files
 
 ### Changed
