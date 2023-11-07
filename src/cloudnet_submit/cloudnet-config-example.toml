@@ -28,6 +28,13 @@ path_fmt       = "/data/hyytiala/dlidar34/Proc/cross/%Y/%Y%m/%Y%m%d/Stare_34_%Y%
 tags           = ["cross"]
 
 [[instrument]]
+site           = "hyytiala"
+instrument     = "halo-doppler-lidar"
+instrument_pid = "https://hdl.handle.net/21.12132/3.421272f219be4f97"
+path_fmt       = "/data/hyytiala/dlidar34/Proc/%Y/%Y%m/system_parameters_*_%Y%m.txt"
+periodicity    = "monthly"
+
+[[instrument]]
 site           = "granada"
 instrument     = "chm15k"
 instrument_pid = "https://hdl.handle.net/21.12132/3.77a75f3b32294855"
