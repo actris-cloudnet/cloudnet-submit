@@ -83,6 +83,13 @@ instrument     = "chm15k"
 instrument_pid = "https://hdl.handle.net/21.12132/3.77a75f3b32294855"
 path_fmt       = "/data/granada/chm/%Y-%m/%Y%m%d_Granada_CHM170119_*.nc"
 
+[[instrument]]
+site           = "kenttarova"
+instrument     = "halo-doppler-lidar"
+instrument_pid = "https://hdl.handle.net/21.12132/3.a93d1483f10742ff"
+path_fmt       = "/data/kenttarova/halo/system_parameters_*_%Y%m.txt"
+periodicity    = "monthly"
+
 [[model]]
 site           = "hyytiala"
 model          = "ecmwf"
@@ -102,14 +109,19 @@ for a given measurement date.
 
 Use the following format codes:
 
-| Directive | Meaning                            |     Example     |
-|-----------|------------------------------------|:---------------:|
-| `%Y`      | Year with century                  | 0001, ..., 2022 |
-| `%y`      | Year without century (zero-padded) |   00, ..., 22   |
-| `%m`      | Month (zero-padded)                |   01, ..., 12   |
-| `%d`      | Day (zero-padded)                  |   01, ..., 31   |
+| Directive | Meaning                            | Example                    |
+|-----------|------------------------------------|:--------------------------:|
+| `%Y`      | Year with century                  | 0001, ..., 2023, ..., 9999 |
+| `%y`      | Year without century (zero-padded) | 00, ..., 23, ..., 99       |
+| `%m`      | Month (zero-padded)                | 01, 02, ..., 12            |
+| `%d`      | Day (zero-padded)                  | 01, 02, ..., 31            |
 
 You can also use wildcard character `*` in `path_fmt` field.
+
+Allowed values for `periodicity` are value `daily` (default) or `monthly`.
+This specifies whether a file contains data from a single day or entire month.
+If a monthly file changes, e.g. it's appended each day of the month, the file will be resubmitted and replaces the previously submitted data.
+For example, HALO Photonics Doppler lidars produce monthly `system_parameters.txt` files.
 
 By default, `cloudnet-submit` expects the `cloudnet-config.toml` file to be
 in your working directory.
