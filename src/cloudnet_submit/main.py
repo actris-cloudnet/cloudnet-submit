@@ -1,5 +1,5 @@
 from .cfg import get_config
-from .utils import get_submissions
+from .utils import get_submissions, print_summary
 
 
 def main() -> None:
@@ -10,6 +10,7 @@ def main() -> None:
             sub.submit()
         else:
             sub.dry_run()
+    print_summary(submissions, config.dry_run)
 
 
 if __name__ == "__main__":
