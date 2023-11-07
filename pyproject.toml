@@ -100,6 +100,6 @@ disable = [
 ]
 
 [tool.release-version]
-filename = "src/cloudnet-submit/version.py"
+filename = "src/cloudnet_submit/version.py"
 pattern = "__version__ = \"(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)\""
 changelog = "CHANGELOG.md"
