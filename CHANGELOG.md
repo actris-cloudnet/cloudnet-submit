@@ -3,6 +3,7 @@
 
 ### Added
 - Add `peridiocity` to instrument configuration with value either `"daily"` or `"monthly"`
+- Print summary of the submitted files
 
 ### Changed
 - Validate `path_fmt` in instrument and model configuration

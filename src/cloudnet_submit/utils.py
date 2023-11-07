@@ -87,3 +87,13 @@ def get_submissions(config: Config) -> List[Submission]:
             )
 
     return submissions
+
+
+def print_summary(submissions: List[Submission], dry_run: bool):
+    n_files = len(submissions)
+    n_dates = len(set(sub.metadata.measurement_date for sub in submissions))
+    file_noun = "file" if n_files == 1 else "files"
+    date_noun = "date" if n_dates == 1 else "dates"
+    submit_verb = "Would submit" if dry_run else "Submitted"
+    print("")
+    print(f"{submit_verb} {n_files} {file_noun} to {n_dates} {date_noun}.")
