@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.9 – 2023-11-17
+
+- Improve documentation of configuration
+
 ## 0.0.8 – 2023-11-07
 
 ### Added
