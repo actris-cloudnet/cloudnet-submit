@@ -2,10 +2,14 @@
 username = "alice"
 password = "alicesSecretPassword"
 
-# instrument_pid:s are listed here:
+# Possible values for `site` are listed here: https://cloudnet.fmi.fi/api/sites
+# You can only upload to sites your user account has permissions for.
+
+# Possible values for `instrument` are listed here:
+# https://docs.cloudnet.fmi.fi/api/upload-file-types.html
+
+# Possible values for `instrument_pid` are listed here:
 # https://instrumentdb.out.ocp.fmi.fi/
-# If your instrument does not have pid yet,
-# fill the form first.
 
 [[instrument]]
 site           = "hyytiala"
