@@ -124,17 +124,24 @@ Use the following format codes:
 
 You can also use wildcard character `*` in `path_fmt` field.
 
-Allowed values for `periodicity` are value `daily` (default) or `monthly`.
-This specifies whether a file contains data from a single day or entire month.
-If a monthly file changes, e.g. it's appended each day of the month, the file will be resubmitted and replaces the previously submitted data.
-For example, HALO Photonics Doppler lidars produce monthly `system_parameters.txt` files.
-
 By default, `cloudnet-submit` expects the `cloudnet-config.toml` file to be
 in your working directory.
 You can also use `--config` to specify another location for the config file:
 ```sh
 cloudnet-submit --config /path/to/your/config.toml
 ```
+
+### Periodicity (advanced)
+
+In some rare cases, the file does not contain data from a single day, but rather from an entire month. 
+For instance, HALO Photonics Doppler lidars generate `system_parameters.txt` files on a monthly basis. 
+In such cases, it is possible to modify the periodicity setting.
+
+The allowed values for periodicity are `daily` (the default) or `monthly`. This determines whether the file contains 
+data from a single day or an entire month. If a monthly file changes, e.g. new data are appended to the file each day 
+of the month, the file will be resubmitted and replaces the previously submitted data.
+
+> Note that it is allowed that the file contains data from shorter period that one full day (e.g. hourly).
 
 ### Usage
 
