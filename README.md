@@ -135,7 +135,7 @@ cloudnet-submit --config /path/to/your/config.toml
 
 In some rare cases, the file does not contain data from a single day, but rather from an entire month. 
 For instance, HALO Photonics Doppler lidars generate `system_parameters.txt` files on a monthly basis. 
-In such cases, it is possible to modify the periodicity setting.
+In such cases, it is possible to modify the `periodicity` setting.
 
 The allowed values for periodicity are `daily` (the default) or `monthly`. This determines whether the file contains 
 data from a single day or an entire month. If a monthly file changes, e.g. new data are appended to the file each day 
