@@ -22,7 +22,7 @@ def generate_testdata():
 
 
 def generate_files_from_fmt(fmt):
-    today = datetime.datetime.utcnow().date()
+    today = datetime.datetime.now(datetime.timezone.utc).date()
     one_day = datetime.timedelta(days=1)
     past_three_days = [today - i * one_day for i in reversed(range(3))]
     file_paths = []
