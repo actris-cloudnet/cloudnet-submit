@@ -3,18 +3,15 @@ import random
 import string
 from pathlib import Path
 
-import toml
-
-from .cfg import test_config_fname
-
 
 def generate_testdata():
-    cfg = toml.load(test_config_fname)
-    path_fmts = []
-    for c in cfg["instrument"] if "instrument" in cfg else []:
-        path_fmts.append(c["path_fmt"])
-    for c in cfg["model"] if "model" in cfg else []:
-        path_fmts.append(c["path_fmt"])
+    path_fmts = [
+        "data/mace-head/chm15k/%Y/%m/%Y%m%d_MaceHead_CHM.nc",
+        "data/granada/rpg-fmcw-94/%Y-%m/radar-%Y-%m-%d-ID*.lv0",
+        "data/granada/rpg-fmcw-94/%Y-%m/radar-%Y-%m-%d-ID*.lv1",
+        "data/kenttarova/halo/system_parameters_1_%Y%m.txt",
+        "data/hyytiala/ecmwf/%Y/%Y%m%d_hyytiala_ecmwf.nc",
+    ]
     file_paths = []
     for fmt in path_fmts:
         file_paths.extend(generate_files_from_fmt(fmt))

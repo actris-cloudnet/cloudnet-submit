@@ -12,7 +12,7 @@ path_fmt       = "data/mace-head/chm15k/%Y/%m/%Y%m%d_MaceHead_CHM.nc"
 site           = "granada"
 instrument     = "rpg-fmcw-94"
 instrument_pid = "pidstring"
-path_fmt       = "data/granada/rpg-fmcw-94/%Y-%m/doppler-%Y-%m-%d-ID*.lv"
+path_fmt       = "data/granada/rpg-fmcw-94/%Y-%m/radar-%Y-%m-%d-ID*.{lv0,lv1}"
 
 [[instrument]]
 site           = "kenttarova"

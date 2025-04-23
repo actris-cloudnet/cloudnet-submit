@@ -4,16 +4,19 @@ import itertools
 from pathlib import Path
 from typing import List
 
+from braceexpand import braceexpand
+
 from .cfg import Config
 from .submission import InstrumentMetadata, ModelMetadata, Submission
 
 
 def get_files(date: datetime.date, path_fmt: str) -> List[Path]:
     files: List[Path] = []
-    for path_ in glob.glob(date.strftime(path_fmt)):
-        path = Path(path_)
-        if path.is_file():
-            files.append(path)
+    for pattern in braceexpand(date.strftime(path_fmt)):
+        for path_str in glob.glob(pattern):
+            path = Path(path_str)
+            if path.is_file():
+                files.append(path)
     return files
 
 

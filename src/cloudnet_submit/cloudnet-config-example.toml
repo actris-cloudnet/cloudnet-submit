@@ -18,27 +18,6 @@ instrument_pid = "https://hdl.handle.net/21.12132/3.191564170f8a4686"
 path_fmt       = "/data/hyytiala/rpg-fmcw-94/%Y/%m/%y%m%d_*_P10_ZEN.LV1"
 
 [[instrument]]
-site           = "hyytiala"
-instrument     = "halo-doppler-lidar"
-instrument_pid = "https://hdl.handle.net/21.12132/3.421272f219be4f97"
-path_fmt       = "/data/hyytiala/dlidar34/Proc/%Y/%Y%m/%Y%m%d/Stare_34_%Y%m%d_*.hpl"
-tags           = ["co"]
-
-[[instrument]]
-site           = "hyytiala"
-instrument     = "halo-doppler-lidar"
-instrument_pid = "https://hdl.handle.net/21.12132/3.421272f219be4f97"
-path_fmt       = "/data/hyytiala/dlidar34/Proc/cross/%Y/%Y%m/%Y%m%d/Stare_34_%Y%m%d_*.hpl"
-tags           = ["cross"]
-
-[[instrument]]
-site           = "hyytiala"
-instrument     = "halo-doppler-lidar"
-instrument_pid = "https://hdl.handle.net/21.12132/3.421272f219be4f97"
-path_fmt       = "/data/hyytiala/dlidar34/Proc/%Y/%Y%m/system_parameters_*_%Y%m.txt"
-periodicity    = "monthly"
-
-[[instrument]]
 site           = "granada"
 instrument     = "chm15k"
 instrument_pid = "https://hdl.handle.net/21.12132/3.77a75f3b32294855"
