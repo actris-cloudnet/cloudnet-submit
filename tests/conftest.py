@@ -29,7 +29,7 @@ def make_data(make_test_dir_with_config):
 
 @pytest.fixture
 def capture_stdout(monkeypatch):
-    buffer = {"stdout": "", "calls": 0}
+    buffer: dict = {"stdout": "", "calls": 0}
 
     def mock_write(s):
         buffer["stdout"] += s
@@ -41,7 +41,7 @@ def capture_stdout(monkeypatch):
 
 @pytest.fixture
 def mock_request(monkeypatch):
-    reqs = {"checksums": []}
+    reqs: dict = {"checksums": []}
 
     class Req:
         def __init__(self, ok=True, status_code=200):

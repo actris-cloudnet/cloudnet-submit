@@ -7,7 +7,7 @@ import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from platform import platform
-from typing import Dict, Literal, Union
+from typing import Literal
 
 import toml
 
@@ -23,7 +23,7 @@ class DataportalConfig:
         self.base_url: str = base_url
         self.instrument = self.Instrument(self.base_url)
         self.model = self.Model(self.base_url)
-        self.headers: Dict[str, str] = {
+        self.headers: dict[str, str] = {
             "User-Agent": f"cloudnet-submit/{__version__} ({platform()})"
         }
 
@@ -55,8 +55,8 @@ class UserAccountConfig:
 
 @dataclass
 class ProxyConfig:
-    http: Union[str, None] = None
-    https: Union[str, None] = None
+    http: str | None = None
+    https: str | None = None
 
     def asdict(self) -> dict:
         return asdict(self)
@@ -68,7 +68,7 @@ class InstrumentConfig:
     instrument: str
     instrument_pid: str
     path_fmt: str
-    tags: Union[list[str], None]
+    tags: list[str] | None
     periodicity: Literal["daily", "monthly"]
 
     def __post_init__(self):
@@ -159,8 +159,10 @@ def get_user_account_config(config) -> UserAccountConfig:
 
 
 def get_instrument_config(config) -> list[InstrumentConfig]:
+    if "instrument" not in config:
+        return []
     instrument_configs = []
-    for iconf in config["instrument"] if "instrument" in config else []:
+    for iconf in config["instrument"]:
         instrument_configs.append(
             InstrumentConfig(
                 site=iconf["site"],
@@ -175,8 +177,10 @@ def get_instrument_config(config) -> list[InstrumentConfig]:
 
 
 def get_model_config(config) -> list[ModelConfig]:
+    if "model" not in config:
+        return []
     model_configs = []
-    for mconf in config["model"] if "model" in config else []:
+    for mconf in config["model"]:
         model_configs.append(
             ModelConfig(
                 site=mconf["site"],

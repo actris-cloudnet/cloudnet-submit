@@ -1,12 +1,15 @@
 # Cloudnet data submission tool
+
 ![Tests](https://github.com/actris-cloudnet/cloudnet-submit/actions/workflows/tests.yml/badge.svg)
 [![PyPI version](https://badge.fury.io/py/cloudnet-submit.svg)](https://badge.fury.io/py/cloudnet-submit)
 
 ## Installation
 
 ### Linux/macOS
+
 If you have `python` and `pip` installed (`python >= 3.8`),
 run the command:
+
 ```sh
 pip install cloudnet-submit
 ```
@@ -14,6 +17,7 @@ pip install cloudnet-submit
 After that, you can use `cloudnet-submit` command to run the program.
 
 ### Windows
+
 If you are using Windows Subsystem for Linux,
 then the aforementioned Linux installation should work.
 
@@ -26,11 +30,13 @@ pip install cloudnet-submit
 ```
 
 Test if the `cloudnet-submit` command works:
+
 ```sh
 cloudnet-submit --version
 ```
 
 If not, you can use an alternative way to run the program:
+
 ```sh
 python -m cloudnet_submit --version
 ```
@@ -40,6 +46,7 @@ python -m cloudnet_submit --version
 ### Configuration file
 
 Generate a configuration file:
+
 ```sh
 cloudnet-submit --generate-config
 ```
@@ -61,7 +68,6 @@ You can find values for `instrument_pid` from the
 If your instrument does not have PID yet,
 please [fill the form](https://docs.google.com/forms/d/e/1FAIpQLSeY4nvAah-K5xPfF-VMhDbmmY9lq7BbtTDKTT9BZMqT7tC7zA/viewform)
 first.
-
 
 ```toml
 # cloudnet-config.toml
@@ -115,18 +121,19 @@ for a given measurement date.
 
 Use the following format codes:
 
-| Directive | Meaning                            | Example                    |
-|-----------|------------------------------------|:--------------------------:|
+| Directive | Meaning                            |          Example           |
+| --------- | ---------------------------------- | :------------------------: |
 | `%Y`      | Year with century                  | 0001, ..., 2023, ..., 9999 |
-| `%y`      | Year without century (zero-padded) | 00, ..., 23, ..., 99       |
-| `%m`      | Month (zero-padded)                | 01, 02, ..., 12            |
-| `%d`      | Day (zero-padded)                  | 01, 02, ..., 31            |
+| `%y`      | Year without century (zero-padded) |    00, ..., 23, ..., 99    |
+| `%m`      | Month (zero-padded)                |      01, 02, ..., 12       |
+| `%d`      | Day (zero-padded)                  |      01, 02, ..., 31       |
 
 You can also use wildcard character `*` in `path_fmt` field.
 
 By default, `cloudnet-submit` expects the `cloudnet-config.toml` file to be
 in your working directory.
 You can also use `--config` to specify another location for the config file:
+
 ```sh
 cloudnet-submit --config /path/to/your/config.toml
 ```
@@ -148,26 +155,31 @@ of the month, the file will be resubmitted and replaces the previously submitted
 By default, `cloudnet-submit` submits data from the past three days.
 
 Use `--dry-run` to list files that would be submitted:
+
 ```sh
 cloudnet-submit --dry-run
 ```
 
 Submit data to the Cloudnet data portal:
+
 ```sh
 cloudnet-submit
 ```
 
 You can also set the number of days to be submitted (including today):
+
 ```sh
 cloudnet-submit --last-ndays 5
 ```
 
 You can also specify a date you want to submit:
+
 ```sh
 cloudnet-submit --date 2022-06-21
 ```
 
 Or a list of dates:
+
 ```sh
 cloudnet-submit --date 2022-06-21 2022-05-01
 ```
@@ -179,10 +191,12 @@ cloudnet-submit --from-date 2022-05-01 --to-date 2022-06-24
 ```
 
 See all the options:
+
 ```sh
 cloudnet-submit --help
 ```
 
 ## Feedback and contact
+
 - Bugs, feature requests, documentation: [Create an issue](https://github.com/actris-cloudnet/cloudnet-submit/issues/new/choose) on Github
 - Or just [send us mail](mailto:actris-cloudnet@fmi.fi) :)

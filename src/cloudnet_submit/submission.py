@@ -5,7 +5,6 @@ import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 from sys import stdout
-from typing import Union
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -19,14 +18,14 @@ class Metadata:
     site: str
     measurement_date: datetime.date
     filename: str
-    checksum: Union[str, None]
+    checksum: str | None
 
 
 @dataclass
 class InstrumentMetadata(Metadata):
     instrument: str
     instrument_pid: str
-    tags: Union[list[str], None]
+    tags: list[str] | None
 
 
 @dataclass
@@ -38,10 +37,10 @@ class ModelMetadata(Metadata):
 class Status:
     metadata_ok: bool = False
     data_ok: bool = False
-    metadata: Union[int, None] = None
-    data: Union[int, None] = None
-    metadata_msg: Union[str, None] = None
-    data_msg: Union[str, None] = None
+    metadata: int | None = None
+    data: int | None = None
+    metadata_msg: str | None = None
+    data_msg: str | None = None
 
 
 class Submission:
@@ -50,7 +49,7 @@ class Submission:
     def __init__(
         self,
         path: Path,
-        metadata: Union[InstrumentMetadata, ModelMetadata],
+        metadata: InstrumentMetadata | ModelMetadata,
         auth: tuple[str, str],
         dataportal_config: DataportalConfig,
         proxy_config: ProxyConfig,
@@ -99,7 +98,7 @@ class Submission:
         if self.session is None:
             raise TypeError
         self.compute_checksum()
-        body: dict[str, Union[None, str, list[str]]] = {
+        body: dict[str, None | str | list[str]] = {
             "site": self.metadata.site,
             "filename": self.metadata.filename,
             "measurementDate": self.metadata.measurement_date.isoformat(),
