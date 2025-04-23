@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0 – 2025-04-23
+
+- Support brace expansion in `path_fmt`
+- Adjust output and status code if submissions fail
+- Test with Python 3.12 and 3.13
+
 ## 0.0.9 – 2023-11-17
 
 - Improve documentation of configuration
