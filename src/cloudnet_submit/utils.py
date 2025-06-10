@@ -97,7 +97,7 @@ def print_summary(submissions: List[Submission], dry_run: bool):
     n_fail = 0
     dates = set()
     for sub in submissions:
-        if dry_run or (sub.status.metadata_ok and sub.status.data_ok):
+        if dry_run or sub.status.ok:
             n_files += 1
             dates.add(sub.metadata.measurement_date)
         else:

@@ -35,6 +35,7 @@ class ModelMetadata(Metadata):
 
 @dataclass
 class Status:
+    ok: bool = False
     metadata_ok: bool = False
     data_ok: bool = False
     metadata: int | None = None
@@ -162,6 +163,9 @@ class Submission:
         if self.status.metadata_ok:
             self.submit_data()
         self.print_status("\n")
+        self.status.ok = (
+            self.status.metadata == 200 and self.status.data_ok
+        ) or self.status.metadata == 409
 
     def dry_run(self):
         info_str = self.__str_dry__()
