@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2 – 2025-06-10
+
+- Don't show error when files are already submitted
+
 ## 0.1.1 – 2025-05-07
 
 - Fix publish workflow
