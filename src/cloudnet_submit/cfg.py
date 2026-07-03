@@ -98,8 +98,7 @@ class Config:
 
 def get_args():
     parser = argparse.ArgumentParser(
-        description="Submit Cloudnet instrument and model data to the Cloudnet "
-        "data portal.",
+        description="Submit data to the ACTRIS Cloudnet data portal.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
