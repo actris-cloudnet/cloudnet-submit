@@ -97,19 +97,85 @@ class Config:
 
 
 def get_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Submit Cloudnet instrument and model data to the Cloudnet "
+        "data portal.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  cloudnet-submit --generate-config        # Generate example config file
+  cloudnet-submit -n                       # Dry run, no actual submission
+  cloudnet-submit                          # Submit last 3 days
+  cloudnet-submit -d 2024-01-15            # Submit specific date
+  cloudnet-submit -l 7                     # Submit last 7 days
+  cloudnet-submit --from-date 2024-01-01 --to-date 2024-01-31 # Submit date range
+""",
+    )
     parser.add_argument(
         "--version", action="version", version=f"%(prog)s {__version__}"
     )
-    parser.add_argument("--generate-config", action="store_true")
-    parser.add_argument("-c", "--config", type=str, default=DEFAULT_CONFIG_FNAME)
-    parser.add_argument("-n", "--dry-run", action="store_true")
-    parser.add_argument("-d", "--date", type=datetime.date.fromisoformat, nargs="*")
-    parser.add_argument("-l", "--last-ndays", type=last_ndays_arg)
-    parser.add_argument("--from-date", type=datetime.date.fromisoformat)
-    parser.add_argument("--to-date", type=datetime.date.fromisoformat)
-    parser.add_argument("--host", type=str, default="https://cloudnet.fmi.fi")
-    parser.add_argument("--port", type=str)
+    parser.add_argument(
+        "--generate-config",
+        action="store_true",
+        help="generate an example configuration file and exit",
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        type=str,
+        default=DEFAULT_CONFIG_FNAME,
+        help=f"path to configuration file (default: {DEFAULT_CONFIG_FNAME})",
+    )
+    parser.add_argument(
+        "-n",
+        "--dry-run",
+        action="store_true",
+        help="simulate submission without uploading data",
+    )
+    parser.add_argument(
+        "-d",
+        "--date",
+        type=datetime.date.fromisoformat,
+        nargs="*",
+        metavar="DATE",
+        help="specific date(s) to submit in ISO format (YYYY-MM-DD). "
+        "can be specified multiple times.",
+    )
+    parser.add_argument(
+        "-l",
+        "--last-ndays",
+        type=last_ndays_arg,
+        metavar="N",
+        help="submit data from the last N days (positive integer). "
+        "default: last 3 days when no date options specified.",
+    )
+    parser.add_argument(
+        "--from-date",
+        type=datetime.date.fromisoformat,
+        metavar="DATE",
+        help="start date for date range (ISO format: YYYY-MM-DD). "
+        "defaults to today if --to-date is given without this.",
+    )
+    parser.add_argument(
+        "--to-date",
+        type=datetime.date.fromisoformat,
+        metavar="DATE",
+        help="end date for date range (ISO format: YYYY-MM-DD). "
+        "defaults to today if omitted.",
+    )
+    parser.add_argument(
+        "--host",
+        type=str,
+        default="https://cloudnet.fmi.fi",
+        help="cloudnet data portal base URL (default: https://cloudnet.fmi.fi)",
+    )
+    parser.add_argument(
+        "--port",
+        type=str,
+        metavar="PORT",
+        help="override port for the data portal URL (appended to --host). "
+        "default: standard HTTPS port (443).",
+    )
     return parser.parse_args()
 
 
