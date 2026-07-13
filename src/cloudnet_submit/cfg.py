@@ -189,6 +189,7 @@ def get_config():
     args = get_args()
     if args.generate_config:
         generate_config(EXAMPLE_CONFIG_FNAME, args.config)
+        print(f"Configuration file generated: {args.config}")
         sys.exit(0)
 
     path = Path(args.config)
