@@ -6,8 +6,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        os: [ubuntu-24.04, macos-latest, windows-latest]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -17,6 +17,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
+      - name: Patch license field
+        if: matrix.python-version == '3.8'
+        shell: bash
+        run: |
+          sed -i.bak \
+            -e 's/^license = "MIT"$/license = {text = "MIT"}/' \
+            -e '/license-files/d' \
+            pyproject.toml
       - name: Install dependencies
         run: pip install .[dev]
       - name: Run tests
