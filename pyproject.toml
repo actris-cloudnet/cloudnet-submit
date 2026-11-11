@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cloudnet-submit"
 authors = [
-  {name = "Niko Leskinen", email = "niko.leskinen@fmi.fi"},
+  { name = "Niko Leskinen", email = "niko.leskinen@fmi.fi" },
 ]
 description = "Cloudnet data submission tool"
 dynamic = ["version"]
@@ -80,7 +80,7 @@ ignore = ["D1"]
 convention = "google"
 
 [tool.setuptools.dynamic]
-version = {attr = "cloudnet_submit.version.__version__"}
+version = { attr = "cloudnet_submit.version.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-case-conflict
       - id: check-executables-have-shebangs
@@ -12,7 +12,7 @@ repos:
         args: ["--fix", "lf"]
       - id: trailing-whitespace
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.6
+    rev: v0.17.4
     hooks:
       - id: ruff
         args: ["--fix"]
@@ -30,11 +30,11 @@ repos:
     hooks:
       - id: prettier
   - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.2
+    rev: v0.25.0
     hooks:
       - id: toml-sort-fix
         exclude: ^(src|tests)/.*\.toml$
   - repo: https://github.com/crate-ci/typos
-    rev: v1.31.1
+    rev: v1.52.2
     hooks:
       - id: typos
